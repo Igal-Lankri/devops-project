@@ -1,0 +1,35 @@
+# מגדיר את גרסת קובץ ה-Compose. 3.8 היא גרסה נפוצה.
+version: '3.8'
+
+# 'services' הוא המקום בו אנו מגדירים את הקונטיינרים שלנו.
+services:
+  
+  # השירות הראשון: הבקאנד
+  backend:
+    # אומר ל-Compose לבנות את האימג' מה-Dockerfile שנמצא בתיקייה ./app-backend
+    build: ./app-backend
+    # שם חינני לקונטיינר (לא חובה, אבל נוח)
+    container_name: vote-app-backend
+    # מיפוי פורטים: מחבר את פורט 5000 במחשב שלך (Host)
+    # לפורט 5000 בתוך הקונטיינר (Container).
+    # זה מאפשר לפרונטאנד לגשת אליו דרך localhost:5000.
+    ports:
+      - "5000:5000"
+    # מגדיר שהקונטיינר יופעל מחדש אוטומטית אם הוא נופל.
+    restart: always
+
+  # השירות השני: הפרונטאנד
+  frontend:
+    # בונה את האימג' מהתיקייה ./app-frontend
+    build: ./app-frontend
+    container_name: vote-app-frontend
+    # מיפוי פורטים: מחבר את פורט 8080 במחשב שלך
+    # לפורט 80 בתוך קונטיינר ה-Nginx.
+    # זה מאפשר לך לגשת לאתר בדפדפן דרך localhost:8080.
+    ports:
+      - "8080:80"
+    # מגדיר תלות: ה-frontend לא ינסה לעלות לפני שה-backend עלה.
+    # זה לא מבטיח שהאפליקציה בבקאנד מוכנה, אבל זה התחלה טובה.
+    depends_on:
+      - backend
+    restart: always
